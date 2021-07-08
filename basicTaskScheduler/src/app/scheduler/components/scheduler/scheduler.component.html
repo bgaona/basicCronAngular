@@ -1,0 +1,64 @@
+<div class="card-container">
+    <span>Available tasks</span>
+    <ng-container *ngFor="let job of availableJobs | async">
+        <div class="card p-3 c-pointer" (click)="selectedJob = job">
+            <p class="text-uppercase">{{job.name}}</p>
+            <span>{{job.description}}</span>
+        </div>
+    </ng-container>
+</div>
+
+<div class="row" *ngIf="selectedJob?.name == 'pingUrl'">
+    <div class="container">
+        <div [formGroup]="form">
+            <div class="form-group mb-3">
+                <label for="url">URL</label>
+                <input formControlName="url" type="url" class="form-control">
+                <div *ngIf="form.controls.url.touched && form.controls.url.invalid" class="alert alert-danger">
+                    <div *ngIf="form.controls.url.errors.required">URL is required.</div>
+                    <div *ngIf="form.controls.url.errors.pattern">Please enter valid url.</div>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <label for="cron">Cron expression</label>
+                <input formControlName="cron" type="text" class="form-control">
+                <div *ngIf="form.controls.cron.touched && form.controls.cron.invalid" class="alert alert-danger">
+                    <div *ngIf="form.controls.cron.errors.required">cron expression is required.</div>
+                    <div *ngIf="form.controls.cron.errors.pattern">Please enter valid url. If you need more information
+                        please go to <a href="https://crontab.guru/" target="_blank">https://crontab.guru/</a></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <button class="btn btn-primary" type="button" (click)="checkUrl()">Check Url</button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary" type="button" [disabled]="!pingResult"
+                        (click)="startSchedule()">start Schedule</button>
+                </div>
+            </div>
+
+        </div>
+        <div *ngIf="error" class="alert alert-danger m-5">
+            {{error}}
+        </div>
+        <div *ngIf="pingResult" class="m-4 row">
+            <div class="col-6">
+                <span>Result</span>
+                <pre class="col">
+                    {{pingResult | json}}
+                </pre>
+            </div>
+            <div class="col-6" *ngIf="schedulerStatus">
+
+                <span>scheduler Result:</span>
+                <h4 class="m-3 alert alert-success">
+                    {{schedulerStatus}}
+                </h4>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
